@@ -1,7 +1,13 @@
 // app/routes.js
-module.exports = function(app, passport,featureToggles,upload,fs) {
-
+module.exports = function(app, passport,featureToggles,upload,fs,mysql) {
+    var tenantList = [];
     var toggles = {foo: true, bar: false};
+    mysql.getConnection(function(err, conn){
+        conn.query("select * from TENANT_TABLE", function(err, rows) {
+                tenantList = JSON.parse(JSON.stringify(rows));
+                conn.release();
+        })
+    });
     featureToggles.load(toggles);
 
 
@@ -9,7 +15,7 @@ module.exports = function(app, passport,featureToggles,upload,fs) {
     // HOME PAGE (with login links) ========
     // =====================================
     app.get('/', function(req, res) {
-        res.render('index.ejs'); // load the index.ejs file
+        res.render('index.ejs'); // load the index.ejs fi
     });
 
     // =====================================
@@ -56,14 +62,36 @@ module.exports = function(app, passport,featureToggles,upload,fs) {
 
     app.get('/profile', isLoggedIn, function(req, res) {
         res.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
+            user : req.user, // get the user out of session and pass to template
+            pageTitle: 'Profile Page'
         });
     });
+
+    app.get('/tenants', isLoggedIn, function(req, res) {
+        res.render('tenantsetup.ejs', {
+            user : req.user,
+            itemSelected: {},
+            pageTitle: 'Tenants',
+            tenantList: tenantList
+        });
+
+    });
+
+    app.post('/tenants',isLoggedIn, function (req, res,next ) {
+
+        res.render('tenantsetup.ejs', {
+            user : req.user, // get the user out of session and pass to template
+            itemSelected: req.body.tenant,
+            pageTitle: 'Tenants',
+            tenantList: tenantList
+        });
+    })
 
     app.get('/grading', isLoggedIn, function(req, res) {
         res.render('grading.ejs', {
             user : req.user,
-            image: false // get the user out of session and pass to template
+            image: false ,// get the user out of session and pass to template,
+            pageTitle: 'Grading'
         });
     });
 
@@ -87,7 +115,8 @@ module.exports = function(app, passport,featureToggles,upload,fs) {
                console.log( response );
                res.render('grading.ejs', {
                    user : req.user,
-                   image: true// get the user out of session and pass to template
+                   image: true,// get the user out of session and pass to template,
+                   pageTitle: 'Grading'
                });
             });
          });

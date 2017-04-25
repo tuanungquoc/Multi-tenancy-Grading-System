@@ -12,12 +12,7 @@
 <body>
 <div class="container">
 
-    <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-        <a href="/grading" class="btn btn-default btn-sm">Grading</a>
-        <a href="/profile" class="btn btn-default btn-sm">Profile</a>
-    </div>
+      <% include ../views/common/header %>
 
     <div class="row">
 
@@ -28,13 +23,11 @@
         <div class="col-sm-6">
             <div class="well">
                 <h3><span class="fa fa-user"></span> Local</h3>
-
                     <p>
                         <strong>id</strong>: <%= user._id %><br>
                         <strong>email</strong>: <%= user.local.email %><br>
                         <strong>password</strong>: <%= user.local.password %>
                     </p>
-
             </div>
         </div>
 
