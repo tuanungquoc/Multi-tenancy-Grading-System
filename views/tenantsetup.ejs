@@ -38,7 +38,7 @@
             <div class="well">
                 <h3><span class="fa fa-user"></span> Grading Attributes:</h3>
                   <% if(toggleList.length != 0) {%>
-                      <form action="/tenants" method="POST">
+                      <form action="/tenantstest" method="POST">
                         <table class="table table-inverse">
                           <thead>
                             <tr>
@@ -58,7 +58,7 @@
                                   <th scope="row"><%= i+1 %></th>
                                   <td><%= toggleList[i].FIELD_NAME %></td>
                                   <td>0&nbsp;<input type="range" min="0" max="100" step="1">&nbsp;100</output></td>
-                                  <td><input type="checkbox" <%=ifSelected %> ></td>
+                                  <td><input type="checkbox" name='toggle' value='<%= toggleList[i].FIELD_NAME %>' <%=ifSelected %> ></td>
                                 </tr>
                            <%}%>
                             <tr>

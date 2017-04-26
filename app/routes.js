@@ -10,7 +10,12 @@ module.exports = function(app, passport,featureToggles,upload,fs,mysql) {
     });
     featureToggles.load(toggles);
 
-
+    app.get('/data', function (req, res) {
+        res.send({ data: [
+            { id: 5, name: 'Bill' },
+            { id: 1, name: 'Bob' }
+        ]});
+    });
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
@@ -94,6 +99,11 @@ module.exports = function(app, passport,featureToggles,upload,fs,mysql) {
 
 
     })
+
+
+    app.post('/tenantstest',isLoggedIn, function (req, res,next ) {
+            res.json(req.body.toggle);
+    });
 
     app.get('/grading', isLoggedIn, function(req, res) {
         res.render('grading.ejs', {
