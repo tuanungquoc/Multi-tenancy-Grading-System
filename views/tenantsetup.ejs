@@ -37,53 +37,45 @@
         <div class="col-sm-6">
             <div class="well">
                 <h3><span class="fa fa-user"></span> Grading Attributes:</h3>
-                <table class="table table-inverse">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Type</th>
-                      <th>Html Type</th>
-                      <th>Selected</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Scale</td>
-                      <td>0&nbsp;<input type="range" min="0" max="100" step="1">&nbsp;100</output></td>
-                      <td><input type="checkbox" checked="true"></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Point</td>
-                      <td><input type="textbox"></td>
-                      <td><input type="checkbox" checked="true"></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>Complete or Not Complete</td>
-                      <td>
-                        <label class="switch">
-                          <input type="checkbox" checked>
-                          <div class="slider round"></div>
-                        </label>
-                      </td>
-                      <td><input type="checkbox" checked="true"></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">4</th>
-                      <td>Comments</td>
-                      <td><textarea placeholder="Your comments...." ></textarea></td>
-                      <td><input type="checkbox" checked="true"></td>
-                    </tr>
-                  </tbody>
-                </table>
+                  <% if(toggleList.length != 0) {%>
+                      <form action="/tenants" method="POST">
+                        <table class="table table-inverse">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Type</th>
+                              <th>Control Type</th>
+                              <th>Selected</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% for(var i =0;i < toggleList.length;i++){
+                                    var ifSelected = '';
+                                    if(toggleList[i].TOGGLE == 1){ ifSelected = "checked='true'";}
+                                    console.log(ifSelected);
+                              %>
+                                <tr>
+                                  <th scope="row"><%= i+1 %></th>
+                                  <td><%= toggleList[i].FIELD_NAME %></td>
+                                  <td>0&nbsp;<input type="range" min="0" max="100" step="1">&nbsp;100</output></td>
+                                  <td><input type="checkbox" <%=ifSelected %> ></td>
+                                </tr>
+                           <%}%>
+                            <tr>
+                              <th></th>
+                              <td></td>
+                              <td></td>
+                              <td><input  type="submit" class="btn btn-success" value="Save"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </form>
+                <%}%>
             </div>
 
         </div>
 
     </div>
-    <input type="submit" class="btn btn-success" value="Save">
 
 </div>
 </body>

@@ -72,19 +72,27 @@ module.exports = function(app, passport,featureToggles,upload,fs,mysql) {
             user : req.user,
             itemSelected: {},
             pageTitle: 'Tenants',
-            tenantList: tenantList
+            tenantList: tenantList,
+            toggleList: []
         });
 
     });
 
     app.post('/tenants',isLoggedIn, function (req, res,next ) {
-
-        res.render('tenantsetup.ejs', {
-            user : req.user, // get the user out of session and pass to template
-            itemSelected: req.body.tenant,
-            pageTitle: 'Tenants',
-            tenantList: tenantList
+        mysql.getConnection(function(err, conn){
+            conn.query("select F.FIELD_NAME, F.TOGGLE from TENANT_TABLE T, TENANT_FIELDS F where T.TENANT_ID = F.TENANT_ID and T.TENANT_ID ='"+ req.body.tenant + "' order by F.FIELD_COLUMN", function(err, rows) {
+                    res.render('tenantsetup.ejs', {
+                        user : req.user, // get the user out of session and pass to template
+                        itemSelected: req.body.tenant,
+                        pageTitle: 'Tenants',
+                        tenantList: tenantList,
+                        toggleList: JSON.parse(JSON.stringify(rows))
+                    });
+                    conn.release();
+            })
         });
+
+
     })
 
     app.get('/grading', isLoggedIn, function(req, res) {
