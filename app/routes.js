@@ -102,7 +102,22 @@ module.exports = function(app, passport,featureToggles,upload,fs,mysql) {
 
 
     app.post('/tenantstest',isLoggedIn, function (req, res,next ) {
-            res.json(req.body.toggle);
+        var gradingAttr = req.body.action1;
+        var pkId = req.body.action2;
+        mysql.getConnection(function(err, conn){
+            console.log(pkId);
+            var update_tasks="UPDATE TENANT_FIELDS SET TOGGLE= NOT TOGGLE WHERE TENANT_ID=? and FIELD_NAME=?";
+            conn.query(update_tasks,[pkId,gradingAttr],function (er, results, rows, fields){
+                if (er) {
+                   console.log("Error "+JSON.stringify(er));
+                   res.status(500).send(er);
+                } else{
+                   res.status(200).json(results);
+                }
+                conn.release();
+            });
+        });
+
     });
 
     app.get('/grading', isLoggedIn, function(req, res) {
