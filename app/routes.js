@@ -1,14 +1,17 @@
 // app/routes.js
 module.exports = function(app, passport,featureToggles,upload,fs,mysql) {
     var tenantList = [];
-    var toggles = {foo: true, bar: false};
+    var toggles = {};
     mysql.getConnection(function(err, conn){
         conn.query("select * from TENANT_TABLE", function(err, rows) {
                 tenantList = JSON.parse(JSON.stringify(rows));
                 conn.release();
         })
     });
-    featureToggles.load(toggles);
+
+    //loading all feature toggles
+
+
 
     app.get('/data', function (req, res) {
         res.send({ data: [
@@ -121,14 +124,35 @@ module.exports = function(app, passport,featureToggles,upload,fs,mysql) {
     });
 
     app.get('/grading', isLoggedIn, function(req, res) {
-        res.render('grading.ejs', {
-            user : req.user,
-            image: false ,// get the user out of session and pass to template,
-            pageTitle: 'Grading'
-        });
+      mysql.getConnection(function(err, conn){
+          conn.query("select F.FIELD_NAME, F.TOGGLE from TENANT_TABLE T, TENANT_FIELDS F where T.TENANT_ID = F.TENANT_ID and T.TENANT_ID ='007671040' order by F.FIELD_COLUMN", function(err, rows) {
+
+                  var results = JSON.parse(JSON.stringify(rows));
+                  console.log(results);
+                  for(var i = 0 ; i < rows.length ; i++){
+                      var toggleOn = false;
+                      if(results[i].TOGGLE == 0 ){
+                        toggles[results[i].FIELD_NAME] = false;
+                      } else {
+                         toggles[results[i].FIELD_NAME] = true;
+                      }
+                  }
+                  featureToggles.load(toggles);
+                  res.render('grading.ejs', {
+                      user : req.user,
+                      image: false ,// get the user out of session and pass to template,
+                      pageTitle: 'Grading'
+                  });
+                  conn.release();
+          })
+      });
+
+
     });
 
     app.post('/grading',isLoggedIn,upload.single('file'), function (req, res,next ) {
+
+
          console.log(req.file.name);
          console.log(req.file.path);
          console.log(req.file.type);
@@ -158,7 +182,6 @@ module.exports = function(app, passport,featureToggles,upload,fs,mysql) {
     // LOGOUT ==============================
     // =====================================
     app.get('/logout', function(req, res) {
-        toggles.foo = false;
         featureToggles.load(toggles);
         req.logout();
         res.redirect('/');

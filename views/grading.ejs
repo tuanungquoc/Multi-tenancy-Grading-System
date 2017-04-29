@@ -43,24 +43,23 @@
         <div class="col-sm-6">
             <div class="well">
                 <h3><span class="fa fa-user"></span> Grading:</h3>
-                <div class="widget-area no-padding blank">
 
-                      <div class="widget-area no-padding blank">
-                      <div class="status-upload">
-                        <form>
-                          <textarea placeholder="What are you doing right now?" ></textarea>
-                          <ul>
-                            <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Audio"><i class="fa fa-music"></i></a></li>
-                            <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Video"><i class="fa fa-video-camera"></i></a></li>
-                            <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Sound Record"><i class="fa fa-microphone"></i></a></li>
-                            <li><a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"><i class="fa fa-picture-o"></i></a></li>
-                          </ul>
-                          <button type="submit" class="btn btn-success green"><i class="fa fa-share"></i> Share</button>
-                        </form>
-                      </div><!-- Status Upload  -->
-                    </div><!-- Widget Area -->
-                  </div>
-                </div>
+                  <% if (isFeatureEnabled('SCALE')) { %>
+                    <h4>Scale:</h4>0&nbsp;<input type="range" min="0" max="100" step="1">&nbsp;100</output></td>
+                  <% } %>
+                  <% if (isFeatureEnabled('POINT')) { %>
+                    <h4>Point:</h4><input type="textbox"></output></td>
+                  <% } %>
+                  <% if (isFeatureEnabled('CNC')) { %>
+                    <h4>Complete:</h4><label class="switch">
+                          <input type="checkbox">
+                          <div class="slider round"></div>
+                    </label>
+                  <% } %>
+                  <% if (isFeatureEnabled('COMMENTS')) { %>
+                    <h4>Comments:</h4><textarea placeholder="What are you doing right now?" ></textarea></td>
+                  <% } %>
+            </div>
         </div>
 
     </div>
