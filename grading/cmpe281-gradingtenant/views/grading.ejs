@@ -1,0 +1,99 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Node Authentication</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/test.css">
+    <script src="https://use.fontawesome.com/ed62a54d4b.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="javascripts/parsescript.js"></script>
+    <% include ../views/common/css %>
+
+</head>
+<body>
+<!-- The Modal -->
+  <div name="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Please wait....</p>
+    </div>
+  </div>
+
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span>
+          <%= pageTitle %>
+        </h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+              <div class="well">
+                  <h3><span class="fa fa-user"></span> Upload Zip File:</h3>
+                  <span>
+                    <table>
+                      <tr>
+                          <td>
+                            <form action = "/grading" method = "POST" enctype = "multipart/form-data">
+                             <input type="file" name="file" size="50" />
+                             <br />
+                             <input type = "submit" value= "Unzip File" />
+                           </form>
+                         </td>
+                          <td>
+                             <br />
+                             <br />
+                            <button class="parse">Parse</button>
+                          </td>
+                      </tr>
+                    </table>
+                  </span>
+              </div>
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="well">
+                <h3><span class="fa fa-user"></span> Result:<img src="images/loading.gif" height="50" width="50" id="img" style="display:none"/ ></h3>
+                  <img  id="parsingResult" class="img-responsive" alt="There is error with your parser" style="display:none" />
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="well">
+                <h3><span class="fa fa-user"></span> Grading:</h3>
+
+                  <% if (isFeatureEnabled('SCALE')) { %>
+                    <h4>Scale:</h4>0&nbsp;<input type="range" min="0" max="100" step="1">&nbsp;100</output></td>
+                  <% } %>
+                  <% if (isFeatureEnabled('POINT')) { %>
+                    <h4>Point:</h4><input type="textbox"></output></td>
+                  <% } %>
+                  <% if (isFeatureEnabled('CNC')) { %>
+                    <h4>Complete:</h4><label class="switch">
+                          <input type="checkbox">
+                          <div class="slider round"></div>
+                    </label>
+                  <% } %>
+                  <% if (isFeatureEnabled('COMMENTS')) { %>
+                    <h4>Comments:</h4><textarea placeholder="What are you doing right now?" ></textarea></td>
+                  <% } %>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>
