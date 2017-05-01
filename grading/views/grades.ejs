@@ -23,47 +23,13 @@
 
     <% include ../views/common/header %>
 
-    <div class="row">
-        <div class="col-sm-12">
-              <div class="well">
-                  <h3><i class="fa fa-cloud-upload" aria-hidden="true"></i>Upload Zip File:</h3>
-                  <span>
-                    <table>
-                      <tr>
-                          <td>
-                            <form action = "/grading" method = "POST" enctype = "multipart/form-data">
-                             <input type="file" name="file" size="50" />
-                             <br />
-                             <input type = "submit" value= "Unzip File" />
-                           </form>
-                         </td>
-                          <td>
-                             <br />
-                             <br />
-                            <button class="parse">Parse</button>
-                          </td>
-                      </tr>
-                    </table>
-                  </span>
-              </div>
 
-        </div>
-
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="well">
-                <h3><i class="fa fa-file-image-o" aria-hidden="true"></i> Result:<img src="images/loading.gif" height="50" width="50" id="img" style="display:none"/ ></h3>
-                  <img  id="parsingResult" class="img-responsive" alt="There is error with your parser" style="display:none" />
-            </div>
-        </div>
-
-    </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="well">
                 <h3><span class="fa fa-user"></span> Grading:</h3>
-                  <table>
+                  <table border="1">
+
                       <form method="POST" action="/persitgrade">
                             <tr>
                                 <td>Test</td>
@@ -80,31 +46,24 @@
                                   <td>Comments</td>
                                 <% } %>
                             </tr>
+                          <%  for(var i=0; i< grades.length;i++) {%>
                             <tr>
-                                <td><input type="textbox" name="grade" required></td>
-
+                                <td><%= grades[i].COLUMN_1 %></td>
                                 <% if (isFeatureEnabled('SCALE')) { %>
-                                  <td><input type="textbox" name="grade" required></td>
+                                  <td><%= grades[i].COLUMN_2 %></td>
                                 <% } %>
                               <% if (isFeatureEnabled('POINT')) { %>
-                                <td><input type="textbox" name="grade" required></td>
+                                <td><%= grades[i].COLUMN_3 %></td>
                               <% } %>
                               <% if (isFeatureEnabled('CNC')) { %>
-                                <td><label class="switch">
-                                      <input type="checkbox" name="grade" required>
-                                      <div class="slider round"></div>
-                                    </label>
-                                </td>
+                                <td><%= grades[i].COLUMN_4 %> </td>
+
                               <% } %>
                               <% if (isFeatureEnabled('COMMENTS')) { %>
-                                <td><textarea placeholder="Enter your comments..." name="grade" required ></textarea></td>
+                                  <td><%= grades[i].COLUMN_5 %> </td>
                               <% } %>
                           </tr>
-                          <tr>
-                            <td  colspan="2">
-                              <button type='submit'>Save</button>
-                            </td>
-                          </tr>
+                        <%}%>
                     </form>
                   </table>
             </div>

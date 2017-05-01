@@ -2,7 +2,7 @@
 
 var unzip = require('unzip-stream');
 
-module.exports = function(app, passport,featureToggles,upload,fs,mysql,jar) {
+module.exports = function(app, passport,featureToggles,upload,fs,mysql,jar,tenant) {
 
     var toggles = {};
 
@@ -23,18 +23,17 @@ module.exports = function(app, passport,featureToggles,upload,fs,mysql,jar) {
 
     app.get('/grading', isLoggedIn, function(req, res) {
       mysql.getConnection(function(err, conn){
-          conn.query("select F.FIELD_NAME, F.TOGGLE from TENANT_TABLE T, TENANT_FIELDS F where T.TENANT_ID = F.TENANT_ID and T.TENANT_ID ='007671040' order by F.FIELD_COLUMN", function(err, rows) {
-
-                  // var results = JSON.parse(JSON.stringify(rows));
-                  // console.log(results);
-                  // for(var i = 0 ; i < rows.length ; i++){
-                  //     var toggleOn = false;
-                  //     if(results[i].TOGGLE == 0 ){
-                  //       toggles[results[i].FIELD_NAME] = false;
-                  //     } else {
-                  //        toggles[results[i].FIELD_NAME] = true;
-                  //     }
-                  // }
+          conn.query("select F.FIELD_NAME, F.TOGGLE from TENANT_TABLE T, TENANT_FIELDS F where T.TENANT_ID = F.TENANT_ID and T.TENANT_ID ='"+tenant.TENANT_ID+"' order by F.FIELD_COLUMN", function(err, rows) {
+                  var results = JSON.parse(JSON.stringify(rows));
+                  console.log(results);
+                  for(var i = 0 ; i < rows.length ; i++){
+                      var toggleOn = false;
+                      if(results[i].TOGGLE == 0 ){
+                        toggles[results[i].FIELD_NAME] = false;
+                      } else {
+                         toggles[results[i].FIELD_NAME] = true;
+                      }
+                  }
                   featureToggles.load(toggles);
                   res.render('grading.ejs', {
                       user : req.user,
@@ -111,30 +110,63 @@ module.exports = function(app, passport,featureToggles,upload,fs,mysql,jar) {
                     pageTitle: 'Grading'
            });
         }
-        //  console.log(req.file.name);
-        //  console.log(req.file.path);
-        //  console.log(req.file.type);
-        //  console.log(req.file);
-        //  //var file = __dirname  +  "result.png";
-        //  var file = "./public/images/result.png"
-        //  fs.readFile( req.file.path, function (err, data) {
-        //     fs.writeFile(file, data, function (err) {
-        //           if( err ){
-        //             console.log( err );
-        //           }else{
-        //              response = {
-        //                 message:'File uploaded successfully',
-        //                 filename:req.file.name
-        //              };
-        //           }
-        //        console.log( response );
-        //        res.render('grading.ejs', {
-        //            user : req.user,
-        //            image: true,// get the user out of session and pass to template,
-        //            pageTitle: 'Grading'
-        //        });
-        //     });
-        //  });
+    })
+
+
+    app.post('/persitgrade',isLoggedIn, function (req, res,next ) {
+        var columns =[];
+        mysql.getConnection(function(err, conn){
+            conn.query("select F.FIELD_NAME, F.FIELD_COLUMN from TENANT_TABLE T, TENANT_FIELDS F where T.TENANT_ID = F.TENANT_ID and T.TENANT_ID ='"+tenant.TENANT_ID+"' and F.TOGGLE = 1 order by F.FIELD_COLUMN", function(err, rows) {
+                    columns = JSON.parse(JSON.stringify(rows));
+                    var query = "INSERT INTO TENANT_DATA( RECORD_ID, TENANT_ID, TENANT_TABLE";
+                    for(var i=0 ; i < columns.length ; i++){
+                      query = query + ", COLUMN_" + columns[i].FIELD_COLUMN;
+                    }
+                    query = query + " ) values ( '"+  new Date() +"', '"+tenant.TENANT_ID+"','TENANT_A'";
+                    console.log(typeof req.body.grade);
+                    var temp = JSON.parse(JSON.stringify(req.body));
+                    for(var j =0 ; j < temp.grade.length; j++){
+                        query = query + ", '" + temp.grade[j] + "'";
+
+                    }
+                    query = query + " )";
+                    console.log(query);
+
+                    mysql.getConnection(function(err, conn){
+                        conn.query(query, function(err, rows) {
+                                res.redirect("/grading");
+                        })
+                    });
+            })
+        });
+
+
+    })
+
+    app.get('/grades',isLoggedIn, function (req, res,next ) {
+        var columns =[];
+        mysql.getConnection(function(err, conn){
+            conn.query("select F.FIELD_NAME, F.FIELD_COLUMN from TENANT_TABLE T, TENANT_FIELDS F where T.TENANT_ID = F.TENANT_ID and T.TENANT_ID ='"+tenant.TENANT_ID+"' and F.TOGGLE = 1 order by F.FIELD_COLUMN", function(err, rows) {
+                    columns = JSON.parse(JSON.stringify(rows));
+                    var query = "SELECT RECORD_ID";
+                    for(var i=0 ; i < columns.length ; i++){
+                      query = query + ", COLUMN_" + columns[i].FIELD_COLUMN;
+                    }
+                    query = query + " from TENANT_DATA where TENANT_ID='"+tenant.TENANT_ID+"'";
+                    mysql.getConnection(function(err, conn){
+                        conn.query(query, function(err, myrows) {
+                                console.log(myrows);
+                                res.render('grades.ejs', {
+                                    user : req.user,
+                                    pageTitle: 'Grades',
+                                    grades: JSON.parse(JSON.stringify(myrows))
+                                });
+                        })
+                    });
+            })
+        });
+
+
     })
     // =====================================
     // LOGOUT ==============================

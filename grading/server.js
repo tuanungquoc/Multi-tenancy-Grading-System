@@ -18,6 +18,7 @@ var featureToggles = require('feature-toggles');
 var configDB = require('./config/database.js');
 var mysql = require('./config/tenantdb.js').pool;
 var jar = require('./config/jarconfig.js');
+var tenant = require('./config/tenantinfo.js');
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
@@ -40,7 +41,7 @@ app.use(featureToggles.middleware);
 var upload = multer({ dest: './upload'});
 
 // routes ======================================================================
-require('./app/routes.js')(app, passport,featureToggles,upload,fs,mysql,jar); // load our routes and pass in our app and fully configured passport
+require('./app/routes.js')(app, passport,featureToggles,upload,fs,mysql,jar,tenant); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
 app.listen(port);
