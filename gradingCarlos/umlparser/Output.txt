@@ -1,0 +1,20 @@
+@startuml
+A <.. B
+A <.. C
+A <.. D
+A : private 
+A : private 
+A : private 
+A : private 
+A : private 
+
+D <.. A
+D : private 
+
+B <.. A
+B : private 
+
+C <.. A
+C : private 
+
+@enduml
